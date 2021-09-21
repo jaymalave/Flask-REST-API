@@ -59,8 +59,8 @@ api.add_resource(Hello, '/')
 api.add_resource(SearchByISBN, '/search-by-isbn/<string:isbn>')
 api.add_resource(BookShelves, '/<int:uid>/bookshelves')
 api.add_resource(BookShelf, '/<int:uid>/bookshelf/<int:shelf>')
-api.add_resource(SearchByAuthor, '/search-by-auth/<string:author>')
-api.add_resource(SearchByName, '/search-by-auth/<string:name>')
+api.add_resource(SearchByAuthor, '/search-by-author/<string:author>')
+api.add_resource(SearchByName, '/search-by-name/<string:name>')
 
 if __name__ == '__main__':
     app.run(debug = True)
