@@ -14,7 +14,7 @@ class Hello(Resource):
         return jsonify({'message':'this is your books api'})
 
 #using google api to retrieve the books data
-class SearchBook(Resource):
+class SearchByISBN(Resource):
     def get(self, isbn):
       apiUrl = "https://www.googleapis.com/books/v1/volumes?q=isbn:"
       isbn = isbn
@@ -38,11 +38,29 @@ class BookShelf(Resource):
         response = requests.get(apiUrl)
         return jsonify(response.json())
 
+#search books by a particular author
+class SearchByAuthor(Resource):
+      def get(self, author):
+          author = author
+          apiUrl = "https://www.googleapis.com/books/v1/volumes?q={author}"
+          response = requests.get(apiUrl)
+          return jsonify(response.json())
+
+#search books by name
+class SearchByName(Resource):
+      def get(self, name):
+          name = name
+          apiUrl = "https://www.googleapis.com/books/v1/volumes?q={name}"
+          response = requests.get(apiUrl)
+          return jsonify(response.json())
+
 
 api.add_resource(Hello, '/')
-api.add_resource(SearchBook, '/search/<string:isbn>')
+api.add_resource(SearchByISBN, '/search-by-isbn/<string:isbn>')
 api.add_resource(BookShelves, '/<int:uid>/bookshelves')
 api.add_resource(BookShelf, '/<int:uid>/bookshelf/<int:shelf>')
+api.add_resource(SearchByAuthor, '/search-by-auth/<string:author>')
+api.add_resource(SearchByName, '/search-by-auth/<string:name>')
 
 if __name__ == '__main__':
     app.run(debug = True)
