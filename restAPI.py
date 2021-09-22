@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import config 
 import json
@@ -71,15 +71,29 @@ class MyShelf(Resource):
        return jsonify(booksDict)
 
 
+parser = reqparse.RequestParser()
+parser.add_argument('name', type=str)
+parser.add_argument('author', type=str)
+
 class AddToShelf(Resource):
-    def get(self, author, book):
-        author = author
-        book = book
+    # def get(self, author, book):
+    #     author = author
+    #     book = book
+    #     conn = sqlite3.connect('books.db')
+    #     cursor = conn.cursor()
+    #     cursor.execute('INSERT INTO BOOKS(name, author) VALUES(?, ?)', (book, author))
+    #     conn.commit()
+    #     return jsonify({"message": "done"}, 200)
+    def post(self):
+        args = parser.parse_args()
+        name = str(args['name'])
+        author = str(args['author'])
         conn = sqlite3.connect('books.db')
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO BOOKS(name, author) VALUES(?, ?)', (book, author))
+        cursor.execute('INSERT INTO BOOKS(name, author) VALUES(?, ?)', (name, author))
         conn.commit()
         return jsonify({"message": "done"}, 200)
+
         
 
 api.add_resource(Hello, '/')
@@ -89,7 +103,7 @@ api.add_resource(BookShelf, '/<int:uid>/bookshelf/<int:shelf>')
 api.add_resource(SearchByAuthor, '/search-by-author/<string:author>')
 api.add_resource(SearchByName, '/search-by-name/<string:name>')
 api.add_resource(MyShelf, '/myshelf')
-api.add_resource(AddToShelf, '/add-book/<string:author>/<string:book>')
+api.add_resource(AddToShelf, '/add-book')
 
 
 
