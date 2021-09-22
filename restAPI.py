@@ -13,7 +13,6 @@ CORS(app)
 key = config.API_KEY
 
 
-
 class Hello(Resource):
     def get(self):
         return jsonify({'message':'this is your books api'})
@@ -62,13 +61,12 @@ class BookShelf(Resource):
 
 class MyShelf(Resource):
    def get(self):
-       booksDict = {}
+       bookList = []
        conn = sqlite3.connect('books.db')
        cursor = conn.cursor()
        for row in cursor.execute('SELECT * FROM Books;'):
-           booksDict["name"] = row[0]
-           booksDict["author"] = row[1]
-       return jsonify(booksDict)
+           bookList.append({"book_id": row[0], "name": row[1], "author": row[2]})
+       return jsonify(bookList)
 
 
 parser = reqparse.RequestParser()
@@ -94,6 +92,17 @@ class AddToShelf(Resource):
         conn.commit()
         return jsonify({"message": "done"}, 200)
 
+class DeleteFromShelf(Resource):
+      def delete(self, id):
+        conn = sqlite3.connect('books.db')
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM BOOKS WHERE BookId=?', (id,))
+        conn.commit()
+        return jsonify({"message": "deleted the book"}, 200)
+
+
+
+
         
 
 api.add_resource(Hello, '/')
@@ -104,6 +113,8 @@ api.add_resource(SearchByAuthor, '/search-by-author/<string:author>')
 api.add_resource(SearchByName, '/search-by-name/<string:name>')
 api.add_resource(MyShelf, '/myshelf')
 api.add_resource(AddToShelf, '/add-book')
+api.add_resource(DeleteFromShelf, '/delete-book/<int:id>')
+
 
 
 
